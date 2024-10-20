@@ -1,7 +1,8 @@
 # RobotArmSimulator
 Robot Arm Simulator in SDL2. Watch as the Robot Types a String of Letters with a Keyboard using its Robot Arms. 
-![e69e81d83736ff8d006733e15ec1d6dc](https://github.com/user-attachments/assets/837872da-ea0b-4653-a691-08826d0d1c57)
+![61e61a06b208c6f77434c3697e42f78b](https://github.com/user-attachments/assets/17046770-58ef-4146-8fa0-bf528ec09450 | width=100)
 ## Usage
+
 ```RobotArmSimulator [FILE_PATH]``` \
 If [FILE_PATH] is not set, then it will default to res/default.txt
 
