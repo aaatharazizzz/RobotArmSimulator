@@ -19,12 +19,8 @@ int main(int argc, char **argv) {
 	try {
 		sdl_raii::Init init(SDL_INIT_EVERYTHING);
 		sdl_raii::TTFInit ttf_init;
-		sdl_raii::Window window("Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+		sdl_raii::Window window("Robot Arm Simulator", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
 		sdl_raii::Renderer renderer(window, -1, SDL_RENDERER_ACCELERATED);
-		InputState input_state;
-		SDL_Event sdl_event;
-		TyperRobot typer_robot(Vec2d(128, 96), "res/typer_robot_cfg.txt");
-		TyperScreen typer_screen(Vec2d(160, 580), 40, 30);
 		sdl_raii::Font font("res/AcPlus_ToshibaSat_8x8.ttf", 16);
 		std::array<sdl_raii::Texture, 256> font_atlas;
 		for (int i = 0; i < 256; i++) {
@@ -35,7 +31,6 @@ int main(int argc, char **argv) {
 			sdl_raii::Surface char_surface(char_surface_raw); 
 			font_atlas[i].Load(SDL_CreateTextureFromSurface(renderer, char_surface));
 		}
-
 		std::ifstream read_file;
 		if (argc >= 2) {
 			read_file.open(argv[1]);
@@ -45,11 +40,13 @@ int main(int argc, char **argv) {
 		std::stringstream buffer;
 		buffer << read_file.rdbuf();
 		std::string text = buffer.str();
-		
 		size_t text_i = 0;
-
-		uint32_t t0 = SDL_GetTicks();
-		uint32_t t1 = SDL_GetTicks();
+		TyperRobot typer_robot(Vec2d(128, 96), "res/typer_robot_cfg.txt");
+		TyperScreen typer_screen(Vec2d(160, 580), 40, 30);
+		SDL_Event sdl_event;
+		InputState input_state;
+		uint32_t frame_begin = SDL_GetTicks();
+		uint32_t frame_end = SDL_GetTicks();
 		float deltatime = (1000.0/FPS) / 1000.0;
 		bool is_running = true;
 		while (is_running) {
@@ -59,9 +56,8 @@ int main(int argc, char **argv) {
 				}
 			}
 			input_state.Update();
-			
-			t1 = SDL_GetTicks();
-			if (t1 - t0 > deltatime * 1000) {
+			frame_end = SDL_GetTicks();
+			if (frame_end - frame_begin > deltatime * 1000) {
 				typer_robot.StartTarget(text[text_i], .1, .1);
 				typer_robot.Update(deltatime);
 				if (!typer_robot.is_busy) {
@@ -78,7 +74,7 @@ int main(int argc, char **argv) {
 				typer_robot.Draw(renderer, font_atlas);
 				typer_screen.Draw(renderer, font_atlas);
 				SDL_RenderPresent(renderer);
-				t0 = t1;
+				frame_begin = frame_end;
 			}
 			input_state.UpdatePrevious();
 		}
@@ -88,3 +84,5 @@ int main(int argc, char **argv) {
 	}
 	return 0;
 }
+
+

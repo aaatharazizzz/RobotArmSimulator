@@ -14,7 +14,7 @@ Vec2d LerpStack::Step(double deltatime) {
 		step_index++;
 		elapsed_time = 0;
 	}
-	if (entries.size() == 1 || step_index >= entries.size() - 1) {
+	if (Finished()) {
 		return entries.back().target;
 	}
 	elapsed_time += deltatime;
@@ -37,3 +37,5 @@ size_t LerpStack::GetStepIndex() {
 bool LerpStack::Finished() {
 	return entries.size() <= 1 || step_index >= (entries.size() - 1);
 }
+
+

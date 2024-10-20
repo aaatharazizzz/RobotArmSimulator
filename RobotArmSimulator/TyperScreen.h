@@ -9,6 +9,8 @@
 #include "Vector2.h"
 #include "SDLRaii.h"
 
+const int TYPERSCREEN_FONTSIZE = 12;
+
 class TyperScreen {
 public:
 	TyperScreen(Vec2d pos, int screen_w, int screen_h);
@@ -20,3 +22,4 @@ private:
 	int screen_w, screen_h;
 	std::vector<std::vector<uint8_t>> text;
 };
+

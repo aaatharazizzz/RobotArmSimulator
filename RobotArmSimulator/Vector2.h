@@ -16,7 +16,7 @@ public:
 	double GetAngle();
 	double Hypot();
 	double ManhattanTo(Vec2d rhs);
-	Vec2d GetNormal();
+	Vec2d UnitVector();
 
 
 	Vec2d operator+ (Vec2d rhs);
@@ -30,3 +30,4 @@ public:
 
 Vec2d MakeUnitVec2d(double angle_rad);
 Vec2d Vec2dLerp(Vec2d a, Vec2d b, float t);
+

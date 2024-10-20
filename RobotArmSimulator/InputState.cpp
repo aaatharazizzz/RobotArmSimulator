@@ -28,3 +28,5 @@ bool InputState::KeyPressed(SDL_Scancode scancode) {
 
 	return (!prev_keystate[scancode] && keystate[scancode]);
 }
+
+

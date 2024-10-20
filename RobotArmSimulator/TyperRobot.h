@@ -10,6 +10,8 @@
 #include "Arm.h"
 #include "LerpStack.h"
 
+const int ROBOT_FONTSIZE = 16;
+
 enum class RobotKeyType {
 	NonShifted,
 	Shifted,
@@ -32,12 +34,6 @@ struct RobotKeyConfig {
 	RobotKeyType type;
 };
 
-enum class ArmLerpState {
-	None,
-	PressKey,
-	Rebound
-};
-
 class TyperRobot {
 public:
 	TyperRobot(Vec2d pos, const char* config_file);
@@ -51,7 +47,7 @@ public:
 	bool is_busy;
 private:
 	bool is_pressing_shift;
-	RobotArmType arm_lerp_type;
+	RobotArmType moving_arm_type;
 	LerpStack arm_lerp;
 	LerpStack shift_arm_lerp;
 	Vec2d left_arm_target;
@@ -63,3 +59,4 @@ private:
 	RobotKeyConfig shiftkey_config;
 	RobotKeyConfig target_config;
 };
+

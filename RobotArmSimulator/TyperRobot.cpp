@@ -3,13 +3,12 @@
 #include <fstream>
 #include <sstream>
 
-
 #include "LerpStack.h"
 
 TyperRobot::TyperRobot(Vec2d pos, const char* config_path) {
 	this->pos = pos;
-	this->left_arm = Arm(Vec2d(-50, 10) + pos, Limb(160), Limb(180), true);
-	this->right_arm = Arm(Vec2d(544 + 30, 10) + pos, Limb(160, 180), Limb(180, 180), false);
+	this->left_arm = Arm(Vec2d(-50, 10) + pos, Limb(170), Limb(160), true);
+	this->right_arm = Arm(Vec2d(544 + 30, 10) + pos, Limb(170, 180), Limb(160, 180), false);
 	this->shift_arm = Arm(Vec2d(-50, -96) + pos, Limb(100), Limb(50), true);
 	this->left_arm_target = Vec2d(pos.x, 20 + pos.y);
 	this->right_arm_target = Vec2d(544 + pos.x, 20 + pos.y);
@@ -70,9 +69,12 @@ TyperRobot::TyperRobot(Vec2d pos, const char* config_path) {
 		}
 	}
 	else {
-		printf("Oops");
+		throw std::runtime_error("Cannot open typer_robot_cfg");
 	}
-	this->shift_arm_target = Vec2d(-5, 16) + pos + Vec2d(shiftkey_config.c + shiftkey_config.w / 2, -shiftkey_config.r) * FONT_SIZE + Vec2d(FONT_SIZE / 2, -FONT_SIZE / 2);
+	this->shift_arm_target = Vec2d(5, 20)
+		+ pos 
+		+ Vec2d(shiftkey_config.c + shiftkey_config.w / 2, -shiftkey_config.r) * ROBOT_FONTSIZE
+		+ Vec2d(ROBOT_FONTSIZE / 2, -ROBOT_FONTSIZE / 2);
 }
 
 void TyperRobot::StartTarget(uint8_t c, double presskey_time, double rebound_time) {
@@ -82,29 +84,31 @@ void TyperRobot::StartTarget(uint8_t c, double presskey_time, double rebound_tim
 	}
 	if (!is_busy) {
 		target_config = curr_config;
-		Vec2d follow_point = pos + Vec2d(curr_config.c + curr_config.w / 2, -curr_config.r) * FONT_SIZE + Vec2d(FONT_SIZE / 2, -FONT_SIZE / 2);
+		Vec2d follow_point = pos
+			+ Vec2d(curr_config.c + curr_config.w / 2, -curr_config.r) * ROBOT_FONTSIZE 
+			+ Vec2d(ROBOT_FONTSIZE / 2, -ROBOT_FONTSIZE / 2);
 		double left_dist = left_arm.origin_pos.ManhattanTo(follow_point);
 		double right_dist = right_arm.origin_pos.ManhattanTo(follow_point);
 		if (left_dist < right_dist) {
-			arm_lerp_type = RobotArmType::Left;
+			moving_arm_type = RobotArmType::Left;
 			arm_lerp.entries[0].target = left_arm_target;
-			arm_lerp.entries[1].target = follow_point;
-			arm_lerp.entries[2].target = follow_point + Vec2d(0, 5);
 		}
 		else {
-			arm_lerp_type = RobotArmType::Right;
+			moving_arm_type = RobotArmType::Right;
 			arm_lerp.entries[0].target = right_arm_target;
-			arm_lerp.entries[1].target = follow_point;
-			arm_lerp.entries[2].target = follow_point + Vec2d(0, 5);
 		}
+		arm_lerp.entries[1].target = follow_point;
 		arm_lerp.entries[1].duration = presskey_time;
+		arm_lerp.entries[2].target = follow_point + Vec2d(0, 5);
 		arm_lerp.entries[2].duration = rebound_time;
 		shift_arm_lerp.entries[0].target = shift_arm_target;
-		shift_arm_lerp.entries[1].target = pos + Vec2d(shiftkey_config.c + shiftkey_config.w / 2, -shiftkey_config.r) * FONT_SIZE + Vec2d(FONT_SIZE / 2, -FONT_SIZE / 2);
+		shift_arm_lerp.entries[1].target = pos 
+			+ Vec2d(shiftkey_config.c + shiftkey_config.w / 2, -shiftkey_config.r) * ROBOT_FONTSIZE 
+			+ Vec2d(ROBOT_FONTSIZE / 2, -ROBOT_FONTSIZE / 2);
 		if (curr_config.type != RobotKeyType::Shifted) {
-			shift_arm_lerp.entries[1].target += Vec2d(-5, 16);
+			shift_arm_lerp.entries[1].target += Vec2d(5, 20);
 		}
-		shift_arm_lerp.entries[1].duration = presskey_time / 3;
+		shift_arm_lerp.entries[1].duration = presskey_time / 2;
 		arm_lerp.Reset();
 		shift_arm_lerp.Reset();
 		is_busy = true;
@@ -116,9 +120,9 @@ void TyperRobot::Update(float deltatime) {
 	if (is_busy) {
 		Vec2d arm_lerped = arm_lerp.Step(deltatime);
 		
-		if (arm_lerp_type == RobotArmType::Left) {
+		if (moving_arm_type == RobotArmType::Left) {
 			left_arm.MoveArm(arm_lerped.x, arm_lerped.y);
-		} else if (arm_lerp_type == RobotArmType::Right) {
+		} else if (moving_arm_type == RobotArmType::Right) {
 			right_arm.MoveArm(arm_lerped.x, arm_lerped.y);
 		}
 
@@ -131,9 +135,9 @@ void TyperRobot::Update(float deltatime) {
 		}
 
 		if (arm_lerp.Finished()) {
-			if (arm_lerp_type == RobotArmType::Left) {
+			if (moving_arm_type == RobotArmType::Left) {
 				left_arm_target = arm_lerped;
-			} else if (arm_lerp_type == RobotArmType::Right) {
+			} else if (moving_arm_type == RobotArmType::Right) {
 				right_arm_target = arm_lerped;
 			}
 			is_busy = false;

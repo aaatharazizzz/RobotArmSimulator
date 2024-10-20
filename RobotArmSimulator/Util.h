@@ -11,3 +11,4 @@ constexpr double DegreesToRad(double degrees) {
 constexpr double RadToDegrees(double rad) {
 	return (rad * 180) / M_PI;
 }
+

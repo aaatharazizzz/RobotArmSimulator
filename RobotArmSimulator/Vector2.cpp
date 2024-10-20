@@ -16,7 +16,7 @@ double Vec2d::ManhattanTo(Vec2d rhs)
 	return abs(x - rhs.x) + abs(y - rhs.y);
 }
 
-Vec2d Vec2d::GetNormal()
+Vec2d Vec2d::UnitVector()
 {
 	if (x == 0 && y == 0) {
 		return Vec2d(0, 0);
@@ -78,3 +78,4 @@ Vec2d Vec2dLerp(Vec2d a, Vec2d b, float t)
 
 	return a + (b - a) * t;
 }
+

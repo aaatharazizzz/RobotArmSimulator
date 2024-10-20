@@ -1,7 +1,5 @@
 #include "TyperScreen.h"
 
-const int TYPERSCREEN_FONTSIZE = 12;
-
 TyperScreen::TyperScreen(Vec2d pos, int screen_w, int screen_h) {
 	this->pos = pos;
 	this->screen_w = screen_w;
@@ -41,7 +39,6 @@ void TyperScreen::AddCharacter(uint8_t c) {
 			}
 		}
 	}
-	
 }
 
 void TyperScreen::Draw(SDL_Renderer* renderer, std::array<sdl_raii::Texture, 256> &font_atlas) {
@@ -70,3 +67,5 @@ void TyperScreen::Draw(SDL_Renderer* renderer, std::array<sdl_raii::Texture, 256
 	}
 	
 }
+
+
