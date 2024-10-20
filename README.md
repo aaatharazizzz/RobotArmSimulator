@@ -1,6 +1,6 @@
 # RobotArmSimulator
-Robot Arm Simulator in SDL2. Watch as the Robot Types a String of Letters with a Keyboard using its Robot Arms. 
-![61e61a06b208c6f77434c3697e42f78b](https://github.com/user-attachments/assets/17046770-58ef-4146-8fa0-bf528ec09450)
+Robot Arm Simulator in SDL2. Watch as the Robot Types a String of Letters with a Keyboard using its Robot Arms. \
+<img src="https://github.com/user-attachments/assets/17046770-58ef-4146-8fa0-bf528ec09450" width="400" height="300">
 ## Usage
 
 ```RobotArmSimulator [FILE_PATH]``` \
